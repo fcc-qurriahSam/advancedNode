@@ -24,21 +24,36 @@ app.use(
     cookie: { secure: false },
   })
 );
-passport.initialize();
-passport.session();
 
-passport.serializeUser((user, done) => {
-  done(null, user._id);
-});
+myDB(async (client) => {
+  try {
+    const myDataBase = await client.db('database').collection('users');
+    console.log('connected to db');
 
-passport.deserializeUser((id, done) => {
-  myUsers.findOne({ _id: new ObjectID(id) }, (err, user) => {
-    done(null, null);
-  });
-});
+    app.route('/').get((req, res) => {
+      res.render('index', {
+        title: 'Connected to Database',
+        message: 'Please login',
+      });
+    });
 
-app.route('/').get((req, res) => {
-  res.render('index', { title: 'hello', message: 'Please log in' });
+    passport.initialize();
+    passport.session();
+
+    passport.serializeUser((user, done) => {
+      done(null, user._id);
+    });
+
+    passport.deserializeUser((id, done) => {
+      myUsers.findOne({ _id: new ObjectID(id) }, (err, user) => {
+        done(err, user);
+      });
+    });
+  } catch (error) {
+    app.route('/').get((req, res) => {
+      res.render('index', { title: 'Error', message: error.message });
+    });
+  }
 });
 
 const PORT = process.env.PORT || 3000;
