@@ -26,6 +26,9 @@ app.use(
   })
 );
 
+passport.initialize();
+passport.session();
+
 myDB(async (client) => {
   try {
     const myDataBase = await client.db('database').collection('users');
@@ -34,11 +37,9 @@ myDB(async (client) => {
       res.render('index', {
         title: 'Connected to Database',
         message: 'Please login',
+        showLogin: true,
       });
     });
-
-    passport.initialize();
-    passport.session();
 
     passport.serializeUser((user, done) => {
       done(null, user._id);
@@ -61,6 +62,16 @@ myDB(async (client) => {
         });
       })
     );
+
+    app
+      .route('/login')
+      .post(passport.authenticate('local', { failureRedirect: '/' }), (req, res) => {
+        return res.status(200).redirect('/profile');
+      });
+
+    app.route('/profile').get((req, res) => {
+      res.render('profile');
+    });
   } catch (error) {
     app.route('/').get((req, res) => {
       res.render('index', { title: 'Error', message: error.message });
