@@ -28,7 +28,6 @@ app.use(
 myDB(async (client) => {
   try {
     const myDataBase = await client.db('database').collection('users');
-    console.log('connected to db');
 
     app.route('/').get((req, res) => {
       res.render('index', {
