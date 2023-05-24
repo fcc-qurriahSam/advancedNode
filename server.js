@@ -26,12 +26,12 @@ app.use(
   })
 );
 
-passport.initialize();
-passport.session();
+app.use(passport.initialize());
+app.use(passport.session());
 
 myDB(async (client) => {
   try {
-    const myDataBase = await client.db('database').collection('users');
+    const myDataBase = await client.db('advanced-node').collection('users');
 
     app.route('/').get((req, res) => {
       res.render('index', {
@@ -47,7 +47,7 @@ myDB(async (client) => {
     });
 
     passport.deserializeUser((id, done) => {
-      myUsers.findOne({ _id: new ObjectID(id) }, (err, doc) => {
+      myDataBase.findOne({ _id: new ObjectID(id) }, (err, doc) => {
         done(null, doc);
       });
     });
@@ -87,6 +87,34 @@ myDB(async (client) => {
       req.logout();
       res.redirect('/');
     });
+
+    const registerUser = async (req, res, next) => {
+      try {
+        const checkUser = await myDataBase.findOne({ username: req.body.username });
+
+        if (checkUser) {
+          res.redirect('/');
+        } else {
+          try {
+            const registerUser = await myDataBase.insertOne({
+              username: req.body.username,
+              password: req.body.password,
+            });
+            next(null, registerUser.ops[0]);
+          } catch (error) {
+            res.redirect('/');
+          }
+        }
+      } catch (error) {
+        next(error);
+      }
+    };
+
+    app
+      .route('/register')
+      .post(registerUser, passport.authenticate('local', { failureRedirect: '/' }), (req, res) => {
+        res.redirect('/profile');
+      });
 
     app.use((req, res, next) => {
       res.status(404).send('Not Found');
