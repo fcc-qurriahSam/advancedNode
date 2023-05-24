@@ -32,8 +32,8 @@ app.use(passport.session());
 myDB(async (client) => {
   try {
     const myDataBase = await client.db('advanced-node').collection('users');
-    routes(app, myDataBase);
     auth(app, myDataBase);
+    routes(app, myDataBase);
   } catch (error) {
     app.route('/').get((req, res) => {
       res.render('index', { title: 'Error', message: error.message });
