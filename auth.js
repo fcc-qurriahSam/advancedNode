@@ -21,7 +21,7 @@ module.exports = (app, myDataBase) => {
       {
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
-        callbackURL: 'http://127.0.0.1:8080/auth/github/callback',
+        callbackURL: 'https://advanced-node-s211.onrender.com/auth/github/callback',
       },
       (accessToken, refreshToken, profile, cb) => {
         console.log(profile);
