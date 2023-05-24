@@ -81,6 +81,15 @@ myDB(async (client) => {
         username: req.user.username,
       });
     });
+
+    app.route('/logout').get((req, res) => {
+      req.logout();
+      res.redirect('/');
+    });
+
+    app.use((req, res, next) => {
+      res.status(404).send('Not Found');
+    });
   } catch (error) {
     app.route('/').get((req, res) => {
       res.render('index', { title: 'Error', message: error.message });
