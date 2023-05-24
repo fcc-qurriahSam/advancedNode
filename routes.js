@@ -6,7 +6,7 @@ module.exports = (app, myDataBase) => {
     if (req.isAuthenticated) {
       return next();
     }
-    res.redirect('/');
+    return res.redirect('/');
   };
 
   const registerUser = async (req, res, next) => {
@@ -38,6 +38,7 @@ module.exports = (app, myDataBase) => {
       message: 'Please login',
       showLogin: true,
       showRegistration: true,
+      showSocialAuth: true,
     });
   });
 
@@ -59,6 +60,13 @@ module.exports = (app, myDataBase) => {
   app
     .route('/register')
     .post(registerUser, passport.authenticate('local', { failureRedirect: '/' }), (req, res) => {
+      res.redirect('/profile');
+    });
+
+  app.route('/auth/github').get(passport.authenticate('github'));
+  app
+    .route('/auth/github/callback')
+    .get(passport.authenticate('github', { failureRedirect: '/' }), (req, res) => {
       res.redirect('/profile');
     });
 
