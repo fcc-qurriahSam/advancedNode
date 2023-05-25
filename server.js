@@ -68,6 +68,10 @@ myDB(async (client) => {
         --currentUsers;
         io.emit('user', { username: socket.request.user.username, currentUsers, connected: false });
       });
+
+      socket.on('chat message', (message) => {
+        io.emit('chat message', { name: socket.request.user.username, message });
+      });
     });
   } catch (error) {
     app.route('/').get((req, res) => {
