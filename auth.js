@@ -47,7 +47,7 @@ module.exports = (app, myDataBase) => {
             },
             { upsert: true, new: true }
           );
-          cb(null, user.value);
+          return cb(null, user.value);
         } catch (error) {
           console.error(error);
         }
