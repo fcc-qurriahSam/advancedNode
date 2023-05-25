@@ -7,10 +7,10 @@ const session = require('express-session');
 const passport = require('passport');
 const routes = require('./routes');
 const auth = require('./auth');
-const http = require('http').createServer(app);
-const io = require('socket.io')(http);
 
 const app = express();
+const http = require('http').createServer(app);
+const io = require('socket.io')(http);
 
 fccTesting(app); //For FCC testing purposes
 app.set('view engine', 'pug');
