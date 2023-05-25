@@ -36,6 +36,9 @@ myDB(async (client) => {
     const myDataBase = await client.db('advanced-node').collection('users');
     auth(app, myDataBase);
     routes(app, myDataBase);
+    io.on('connection', (socket) => {
+      console.log('A user has connected');
+    });
   } catch (error) {
     app.route('/').get((req, res) => {
       res.render('index', { title: 'Error', message: error.message });
